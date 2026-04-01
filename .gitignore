@@ -1,4 +1,14 @@
 .env
+.env.local
+*.env
+venv/
+__pycache__/
+.pytest_cache/
+.streamlit/
+.cache/
+*.pkl
+*.log
+.env
 venv/
 __pycache__/
 *.pyc
