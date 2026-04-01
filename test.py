@@ -1,10 +1,15 @@
+import os
 import requests
+from dotenv import load_dotenv
 
-API_KEY = "74HIK4QIJTTHZQAQR8FTW99FSU83P54P38"
+# ================= LOAD ENV =================
+load_dotenv()
+
+API_KEY = os.getenv("ETHERSCAN_API_KEY")
 
 url = "https://api.etherscan.io/v2/api"
 
-# Binance hot wallet (very active = whales guaranteed)
+# Binance hot wallet (whale activity)
 address = "0x28C6c06298d514Db089934071355E5743bf21d60"
 
 params = {
@@ -15,21 +20,22 @@ params = {
     "startblock": 0,
     "endblock": 99999999,
     "page": 1,
-    "offset": 100,   # more data = higher chance
+    "offset": 100,
     "sort": "desc",
     "apikey": API_KEY
 }
 
-response = requests.get(url, params=params)
+response = requests.get(url, params=params, timeout=10)
 data = response.json()
 
-# QUICK TEST: print ANY big transactions (>10 ETH)
+# ================= PROCESS =================
 found = False
 
-for tx in data["result"]:
+for tx in data.get("result", []):
     value_eth = int(tx["value"]) / 10**18
     
-    if value_eth > 1:   # low threshold so it ALWAYS prints
+    if value_eth > 1:
+        found = True
         print(f"🐋 Whale Tx: {value_eth:.2f} ETH")
         print(f"From: {tx['from']}")
         print(f"To: {tx['to']}")
