@@ -7,7 +7,7 @@ async function fetcher(url: string) {
 }
 
 // ── generic polling hook ─────────────────────────────────────────
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export function useApi<T>(url: string, intervalMs = 30000) {
   const [data, setData] = useState<T | null>(null);
@@ -49,18 +49,21 @@ export function usePrediction(coin: string) {
   return useApi<PredictionData>(`/api/prediction/${coin}`, 60_000);
 }
 
-// ── useSentimentSummary  (MetricCards uses this) ─────────────────
+// ── useSentimentSummary  (MetricCards + CryptoHeatmaps) ─────────
 export interface SentimentSummary {
   coin: string;
   avg_score: number;
   dominant_label: string;
+  bullish_pct?: number;
+  bearish_pct?: number;
+  total_news?: number;
 }
 
 export function useSentimentSummary() {
   return useApi<SentimentSummary[]>("/api/sentiment/summary", 60_000);
 }
 
-// ── useSentimentLatest  (SentimentHeatmap uses this) ─────────────
+// ── useSentimentLatest  (WhaleNews uses this) ────────────────────
 export function useSentimentLatest() {
   return useApi("/api/sentiment/latest", 60_000);
 }
@@ -86,26 +89,4 @@ export interface ChartData {
 
 export function useChartData(symbol: string, days = 90) {
   return useApi<ChartData>(`/api/chart/${symbol}?days=${days}`, 5 * 60_000);
-}
-
-// ── useLiveLogs  (LiveLogs uses this) ────────────────────────────
-export function useLiveLogs(maxLines = 200) {
-  const [logs, setLogs] = useState<string[]>([]);
-
-  useEffect(() => {
-    const es = new EventSource(`${BASE}/api/logs/stream`);
-    es.onmessage = (e) => {
-      const { log, ping } = JSON.parse(e.data);
-      if (!ping && log) {
-        setLogs((prev) => {
-          const next = [...prev, log];
-          return next.length > maxLines ? next.slice(-maxLines) : next;
-        });
-      }
-    };
-    es.onerror = () => es.close();
-    return () => es.close();
-  }, [maxLines]);
-
-  return logs;
 }

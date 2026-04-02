@@ -1,9 +1,11 @@
-import os
+# routes/chart.py — Historical prices + LSTM predictions for chart
+import os, datetime
 from fastapi import APIRouter, HTTPException
 import asyncpg
 
 router = APIRouter(prefix="/api/chart", tags=["chart"])
 
+# binance_data DB (historical OHLCV)
 HIST = dict(
     host=os.getenv("DB_HOST", "localhost"),
     port=int(os.getenv("DB_PORT", 5432)),
@@ -12,24 +14,25 @@ HIST = dict(
     database=os.getenv("DB_NAME", "binance_data"),
 )
 
+# crypto_terminal DB (predictions)
 CRYPTO = dict(
-    host=os.getenv("CRYPTO_DB_HOST", "localhost"),
-    port=int(os.getenv("CRYPTO_DB_PORT", 5432)),
-    user=os.getenv("CRYPTO_DB_USER", "postgres"),
-    password=os.getenv("CRYPTO_DB_PASSWORD", "crypto_pass_123"),
+    host="localhost",
+    port=5432,
+    user="crypto_user",
+    password="crypto_pass_123",
     database="crypto_terminal",
 )
+
 
 @router.get("/{symbol}")
 async def get_chart(symbol: str, days: int = 90):
     symbol = symbol.upper()
-    table  = f"market_data_{symbol.lower()}usdt"   # market_data_btcusdt etc.
+    table = f"market_data_{symbol.lower()}usdt"  # market_data_btcusdt etc.
 
     # ── historical prices ─────────────────────────────────────────
     try:
         h = await asyncpg.connect(**HIST)
 
-        # verify table exists
         exists = await h.fetchval(
             "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name=$1)",
             table
@@ -39,8 +42,8 @@ async def get_chart(symbol: str, days: int = 90):
             raise HTTPException(404, f"Table {table} not found in binance_data")
 
         cutoff_ms = int((
-            __import__('datetime').datetime.utcnow() -
-            __import__('datetime').timedelta(days=days)
+            datetime.datetime.utcnow() -
+            datetime.timedelta(days=days)
         ).timestamp() * 1000)
 
         rows = await h.fetch(f"""
@@ -60,29 +63,29 @@ async def get_chart(symbol: str, days: int = 90):
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(500, f"Historical DB error: {e}")
+        historical = []
 
-    # ── LSTM predictions ──────────────────────────────────────────
+    # ── LSTM predictions (correct column names) ───────────────────
     try:
         c = await asyncpg.connect(**CRYPTO)
         preds = await c.fetch("""
-            SELECT predicted_at, pred_1h, pred_4h, pred_24h
+            SELECT forecasted_at, predicted_1h, predicted_4h, predicted_24h
             FROM   price_forecasts
             WHERE  coin = $1
-            ORDER  BY predicted_at DESC
+            ORDER  BY forecasted_at DESC
             LIMIT  100
         """, symbol)
         await c.close()
         predictions = [
             {
-                "ts":       r["predicted_at"].isoformat(),
-                "pred_1h":  float(r["pred_1h"]),
-                "pred_4h":  float(r["pred_4h"]),
-                "pred_24h": float(r["pred_24h"]),
+                "ts":       r["forecasted_at"].isoformat(),
+                "pred_1h":  float(r["predicted_1h"]) if r["predicted_1h"] else 0,
+                "pred_4h":  float(r["predicted_4h"]) if r["predicted_4h"] else 0,
+                "pred_24h": float(r["predicted_24h"]) if r["predicted_24h"] else 0,
             }
             for r in preds
         ]
     except Exception:
-        predictions = []  # non-fatal
+        predictions = []
 
     return {"symbol": symbol, "historical": historical, "predictions": predictions}

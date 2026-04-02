@@ -4,7 +4,6 @@ import CryptoHeatmaps from "@/components/CryptoHeatmaps";
 import SignalFeed from "@/components/SignalFeed";
 import PriceChart from "@/components/PriceChart";
 import WhaleNews from "@/components/WhaleNews";
-import LiveLogs from "@/components/LiveLogs";
 
 function Index() {
   return (
@@ -30,11 +29,6 @@ function Index() {
             <SignalFeed />
             <WhaleNews />
           </div>
-        </div>
-
-        {/* Live Logs */}
-        <div className="px-6">
-          <LiveLogs />
         </div>
       </main>
     </div>

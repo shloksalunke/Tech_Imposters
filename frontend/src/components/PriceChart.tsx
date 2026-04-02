@@ -29,7 +29,7 @@ export default function PriceChart() {
   const [symbol, setSymbol]   = useState<Symbol>("BTC");
   const [days, setDays]       = useState(30);
   const [showPred, setShowPred] = useState(true);
-  const { data, loading, error } = useChartData(symbol, days);
+  const { data, isLoading: loading, error } = useChartData(symbol, days);
 
   // merge historical + latest prediction point for chart
   const chartData = (() => {
