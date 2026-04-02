@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import MetricCards from "@/components/MetricCards";
-import SentimentHeatmap from "@/components/SentimentHeatmap";
+import CryptoHeatmaps from "@/components/CryptoHeatmaps";
 import SignalFeed from "@/components/SignalFeed";
 import PriceChart from "@/components/PriceChart";
 import WhaleNews from "@/components/WhaleNews";
@@ -8,26 +8,31 @@ import LiveLogs from "@/components/LiveLogs";
 
 function Index() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-black text-white">
       <Header />
-      <main className="py-5 space-y-4">
-        <MetricCards />
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 px-6">
-          <div className="lg:col-span-3">
-            <SentimentHeatmap />
-          </div>
-          <div className="lg:col-span-2">
-            <SignalFeed />
-          </div>
+      <main className="py-10 space-y-8">
+        {/* Top Metrics */}
+        <div className="px-6">
+          <MetricCards />
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 px-6">
-          <div className="lg:col-span-3">
+
+        {/* Sentiment Heatmaps */}
+        <div className="px-6">
+          <CryptoHeatmaps />
+        </div>
+
+        {/* Charts and signals section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-6">
+          <div className="lg:col-span-2">
             <PriceChart />
           </div>
-          <div className="lg:col-span-2">
+          <div className="space-y-6">
+            <SignalFeed />
             <WhaleNews />
           </div>
         </div>
+
+        {/* Live Logs */}
         <div className="px-6">
           <LiveLogs />
         </div>
