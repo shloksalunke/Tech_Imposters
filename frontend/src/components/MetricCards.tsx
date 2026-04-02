@@ -1,25 +1,6 @@
-// MetricCards.tsx — Live metric cards with enhanced styling
 import { useSentimentSummary, usePrediction } from "@/hooks/useApi";
 
 const COINS = ["BTC", "ETH", "BNB"];
-
-const COIN_COLORS = {
-  BTC: "from-yellow-500/40 to-orange-600/40",
-  ETH: "from-purple-500/40 to-blue-600/40",
-  BNB: "from-amber-500/40 to-yellow-600/40",
-};
-
-const LabelBadge = ({ label }: { label: string }) => {
-  const cls =
-    label === "BULLISH" ? "bg-green-500/25 text-green-300 border border-green-500/50 shadow-lg shadow-green-500/20"
-    : label === "BEARISH" ? "bg-red-500/25 text-red-300 border border-red-500/50 shadow-lg shadow-red-500/20"
-    : "bg-blue-500/25 text-blue-300 border border-blue-500/50 shadow-lg shadow-blue-500/20";
-  return (
-    <span className={`text-xs font-bold px-3 py-1 rounded-full ${cls} backdrop-blur`}>
-      {label === "BULLISH" ? "📈" : label === "BEARISH" ? "📉" : "↔️"} {label}
-    </span>
-  );
-};
 
 const CoinCard = ({ coin }: { coin: string }) => {
   const { data: pred, isLoading: predLoading } = usePrediction(coin);
@@ -27,16 +8,13 @@ const CoinCard = ({ coin }: { coin: string }) => {
 
   const sentiment = summaries?.find((s: any) => s.coin === coin);
   const loading = predLoading || sentLoading;
-  const gradient = COIN_COLORS[coin as keyof typeof COIN_COLORS];
 
   if (loading) {
     return (
-      <div className={`relative rounded-2xl bg-gradient-to-br ${gradient} border border-gray-700/50 p-6 animate-pulse backdrop-blur overflow-hidden`}>
-        <div className="relative space-y-4">
-          <div className="h-5 bg-gray-700/50 rounded-lg w-1/3" />
-          <div className="h-8 bg-gray-700/50 rounded-lg w-2/3" />
-          <div className="h-4 bg-gray-700/50 rounded-lg w-full" />
-        </div>
+      <div className="rounded-xl bg-[#111118] border border-gray-800/50 p-5 animate-pulse">
+        <div className="h-4 bg-gray-800 rounded w-20 mb-3" />
+        <div className="h-7 bg-gray-800 rounded w-32 mb-2" />
+        <div className="h-3 bg-gray-800 rounded w-24" />
       </div>
     );
   }
@@ -47,43 +25,34 @@ const CoinCard = ({ coin }: { coin: string }) => {
   const label = sentiment?.dominant_label ?? "NEUTRAL";
   const direction = pred?.direction_24h ?? "SIDEWAYS";
 
+  const labelColor =
+    label === "BULLISH" ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
+    : label === "BEARISH" ? "text-red-400 bg-red-500/10 border-red-500/20"
+    : "text-blue-400 bg-blue-500/10 border-blue-500/20";
+
   return (
-    <div className={`relative rounded-2xl bg-gradient-to-br ${gradient} border border-gray-700/50 p-6 backdrop-blur overflow-hidden group hover:shadow-2xl transition-all`}>
-      {/* Glowing background effect */}
-      <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl pointer-events-none" />
-      
-      <div className="relative space-y-4">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-bold text-gray-200 font-mono tracking-widest">
-            {coin}/USDT
-          </span>
-          <LabelBadge label={label} />
-        </div>
+    <div className="rounded-xl bg-[#111118] border border-gray-800/50 p-5 hover:border-gray-700/60 transition-colors">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-xs font-medium text-gray-400 tracking-wide">{coin}/USDT</span>
+        <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${labelColor}`}>
+          {label}
+        </span>
+      </div>
 
-        <div className="space-y-2">
-          <div className="font-mono text-4xl font-black text-white drop-shadow-lg">
-            ${price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </div>
-          
-          <div className="flex items-center gap-2 text-sm">
-            <span className={`font-mono font-bold flex items-center gap-1 text-lg ${change >= 0 ? "text-green-300" : "text-red-300"}`}>
-              {direction === "UP" ? "📈" : direction === "DOWN" ? "📉" : "➡️"}
-              {change >= 0 ? "+" : ""}{change.toFixed(2)}%
-            </span>
-            <span className="text-xs text-gray-300">24h Change</span>
-          </div>
-        </div>
+      <div className="text-2xl font-bold text-gray-100 font-mono tracking-tight">
+        ${price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+      </div>
 
-        <div className="flex items-center justify-between pt-2 border-t border-white/10">
-          <span className="text-xs text-gray-300">Sentiment</span>
-          <div className={`px-3 py-1 rounded-full font-mono font-bold text-sm ${
-            score > 0.65 ? "bg-green-500/30 text-green-300" : 
-            score < 0.4 ? "bg-red-500/30 text-red-300" : 
-            "bg-blue-500/30 text-blue-300"
-          }`}>
+      <div className="flex items-center justify-between mt-2">
+        <span className={`text-sm font-mono font-medium ${change >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+          {direction === "UP" ? "↑" : direction === "DOWN" ? "↓" : "→"}{" "}
+          {change >= 0 ? "+" : ""}{change.toFixed(2)}%
+        </span>
+        <span className="text-xs text-gray-500">
+          Score: <span className={`font-mono font-medium ${score > 0.65 ? "text-emerald-400" : score < 0.4 ? "text-red-400" : "text-blue-400"}`}>
             {score.toFixed(2)}
-          </div>
-        </div>
+          </span>
+        </span>
       </div>
     </div>
   );
@@ -91,7 +60,7 @@ const CoinCard = ({ coin }: { coin: string }) => {
 
 const MetricCards = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {COINS.map((coin) => (
         <CoinCard key={coin} coin={coin} />
       ))}
