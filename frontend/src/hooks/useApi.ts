@@ -9,7 +9,7 @@ async function fetcher(url: string) {
 // ── generic polling hook ─────────────────────────────────────────
 import { useEffect, useState } from "react";
 
-export function useApi<T>(url: string, intervalMs = 30000) {
+export function useApi<T>(url: string, intervalMs = 15000) {
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +46,7 @@ export interface PredictionData {
 }
 
 export function usePrediction(coin: string) {
-  return useApi<PredictionData>(`/api/prediction/${coin}`, 60_000);
+  return useApi<PredictionData>(`/api/prediction/${coin}`, 30_000);
 }
 
 // ── useSentimentSummary  (MetricCards + CryptoHeatmaps) ─────────
@@ -60,22 +60,22 @@ export interface SentimentSummary {
 }
 
 export function useSentimentSummary() {
-  return useApi<SentimentSummary[]>("/api/sentiment/summary", 60_000);
+  return useApi<SentimentSummary[]>("/api/sentiment/summary", 15_000);
 }
 
 // ── useSentimentLatest  (WhaleNews uses this) ────────────────────
 export function useSentimentLatest() {
-  return useApi("/api/sentiment/latest", 60_000);
+  return useApi("/api/sentiment/latest", 15_000);
 }
 
 // ── useWhales  (WhaleNews uses this) ─────────────────────────────
 export function useWhales() {
-  return useApi("/api/whales", 30_000);
+  return useApi("/api/whales", 15_000);
 }
 
 // ── useSignals  (SignalFeed uses this) ───────────────────────────
 export function useSignals() {
-  return useApi("/api/signals", 30_000);
+  return useApi("/api/signals", 15_000);
 }
 
 // ── useChartData  (PriceChart uses this) ─────────────────────────
@@ -88,5 +88,5 @@ export interface ChartData {
 }
 
 export function useChartData(symbol: string, days = 90) {
-  return useApi<ChartData>(`/api/chart/${symbol}?days=${days}`, 5 * 60_000);
+  return useApi<ChartData>(`/api/chart/${symbol}?days=${days}`, 60_000);
 }
