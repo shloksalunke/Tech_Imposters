@@ -99,18 +99,34 @@ def get_llm_sentiment(text: str) -> tuple:
 
     text = text[:500]
 
-    prompt = f"""You are a crypto trading analyst.
+    prompt = f"""You are an expert cryptocurrency market analyst with deep knowledge of crypto markets, trading psychology, and market sentiment.
 
-Classify the sentiment into:
-BULLISH, BEARISH, NEUTRAL, FUD
+Analyze the following crypto news and classify its market sentiment.
 
-Give confidence score (0–1).
+SENTIMENT DEFINITIONS:
+- BULLISH: Positive news — price increase expected, adoption, partnerships, ETF approvals, whale buying, regulatory clarity
+- BEARISH: Negative news — price drop expected, hacks, bans, sell-offs, negative regulation, FUD confirmed
+- NEUTRAL: Balanced or insignificant news — minor updates, factual reports with no clear price impact
+- FUD: Fear/Uncertainty/Doubt — unverified threats, speculation of bans, quantum threats, panic news
 
-STRICT FORMAT:
-LABEL: <...>
-SCORE: <...>
+CONFIDENCE SCORING:
+- 0.9–1.0 : Extremely clear signal (e.g. ETF approved, major exchange hacked)
+- 0.7–0.89: Strong signal with minor ambiguity
+- 0.5–0.69: Moderate signal, mixed indicators
+- 0.3–0.49: Weak signal, mostly noise
+- 0.0–0.29: Very unclear, insufficient information
 
-News:
+ANALYSIS STEPS (think step by step):
+1. Identify the key event described
+2. Determine direct impact on crypto price
+3. Assess market psychology (fear vs greed)
+4. Assign label and confidence
+
+STRICT OUTPUT FORMAT (no extra text, no explanation):
+LABEL: <BULLISH|BEARISH|NEUTRAL|FUD>
+SCORE: <0.00 to 1.00>
+
+News to analyze:
 {text}
 """
 
