@@ -4,8 +4,9 @@ import SentimentHeatmap from "@/components/SentimentHeatmap";
 import SignalFeed from "@/components/SignalFeed";
 import PriceChart from "@/components/PriceChart";
 import WhaleNews from "@/components/WhaleNews";
+import LiveLogs from "@/components/LiveLogs";
 
-const Index = () => {
+function Index() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -27,9 +28,12 @@ const Index = () => {
             <WhaleNews />
           </div>
         </div>
+        <div className="px-6">
+          <LiveLogs />
+        </div>
       </main>
     </div>
   );
-};
+}
 
 export default Index;
