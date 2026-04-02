@@ -1,0 +1,18 @@
+Modules: ['lstm1', 'drop1', 'lstm2', 'drop2', 'lstm3', 'drop3', 'fc1', 'relu', 'fc2']
+  lstm1.weight_ih_l0  shape=[512, 32]  n=16384
+  lstm1.weight_hh_l0  shape=[512, 128]  n=65536
+  lstm1.bias_ih_l0  shape=[512]  n=512
+  lstm1.bias_hh_l0  shape=[512]  n=512
+  lstm2.weight_ih_l0  shape=[256, 128]  n=32768
+  lstm2.weight_hh_l0  shape=[256, 64]  n=16384
+  lstm2.bias_ih_l0  shape=[256]  n=256
+  lstm2.bias_hh_l0  shape=[256]  n=256
+  lstm3.weight_ih_l0  shape=[128, 64]  n=8192
+  lstm3.weight_hh_l0  shape=[128, 32]  n=4096
+  lstm3.bias_ih_l0  shape=[128]  n=128
+  lstm3.bias_hh_l0  shape=[128]  n=128
+  fc1.weight  shape=[16, 32]  n=512
+  fc1.bias  shape=[16]  n=16
+  fc2.weight  shape=[1, 16]  n=16
+  fc2.bias  shape=[1]  n=1
+TOTAL params: 145697
