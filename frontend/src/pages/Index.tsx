@@ -1,35 +1,30 @@
 import Header from "@/components/Header";
 import MetricCards from "@/components/MetricCards";
-import SentimentHeatmap from "@/components/SentimentHeatmap";
 import SignalFeed from "@/components/SignalFeed";
 import PriceChart from "@/components/PriceChart";
 import WhaleNews from "@/components/WhaleNews";
 
-const Index = () => {
+function Index() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0a0a0f] text-gray-100">
       <Header />
-      <main className="py-5 space-y-4">
+      <main className="max-w-[1440px] mx-auto px-4 sm:px-6 py-6 space-y-6">
+        {/* Metric cards */}
         <MetricCards />
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 px-6">
-          <div className="lg:col-span-3">
-            <SentimentHeatmap />
-          </div>
+
+        {/* Chart + Signals */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           <div className="lg:col-span-2">
-            <SignalFeed />
-          </div>
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 px-6">
-          <div className="lg:col-span-3">
             <PriceChart />
           </div>
-          <div className="lg:col-span-2">
+          <div className="space-y-5">
+            <SignalFeed />
             <WhaleNews />
           </div>
         </div>
       </main>
     </div>
   );
-};
+}
 
 export default Index;
